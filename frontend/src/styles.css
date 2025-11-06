@@ -1,0 +1,184 @@
+/* 🌟 RESET & BASE */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(145deg, #e0f2fe, #f3e8ff);
+  color: #111827;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+}
+
+/* 💠 HEADER */
+header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+header p {
+  color: #4b5563;
+  font-size: 1rem;
+  margin-top: 6px;
+}
+
+/* 🧱 MAIN CONTAINER */
+.container {
+  width: 95%;
+  max-width: 450px;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.15);
+  animation: fadeInUp 0.5s ease-in-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 35px rgba(37, 99, 235, 0.25);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #111827;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* 📝 FORM ELEMENTS */
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #111827;            /* visible text */
+  background-color: #ffffff; /* pure white background */
+  transition: all 0.2s ease;
+}
+
+input::placeholder {
+  color: #9ca3af; /* light gray placeholder */
+}
+
+input:focus {
+  border-color: #2563eb;
+  outline: none;
+  background-color: #f8fafc;
+}
+
+/* 🔘 BUTTONS */
+button {
+  display: inline-block;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #1e40af;
+  transform: scale(1.02);
+}
+
+/* ➕ ADD OPTION BUTTON */
+button[type="button"] {
+  background-color: #f3f4f6;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+
+button[type="button"]:hover {
+  background-color: #e5e7eb;
+  transform: scale(1.01);
+}
+
+/* 📊 POLL PAGE BUTTONS */
+.poll-button {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
+  background-color: #3b82f6;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.poll-button:hover {
+  background-color: #2563eb;
+  transform: scale(1.02);
+}
+
+/* ✨ ANIMATIONS */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 RESPONSIVE DESIGN */
+@media (max-width: 600px) {
+  body {
+    padding: 15px;
+  }
+
+  .container {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  header h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+}
