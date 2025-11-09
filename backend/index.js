@@ -55,7 +55,7 @@ app.set("trust proxy", 1);
 app.use(express.json());
 
 // Main API Route
-app.use("/api/polls", pollRoutes);
+app.use("/polls", pollRoutes);
 
 // --- Vercel Serverless Export ---
 // This wraps the Express app so Vercel can run it as a function
