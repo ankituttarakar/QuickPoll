@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const serverless = require("serverless-http"); // New import
+const serverless = require("serverless-http"); 
 const pollRoutes = require("./routes/polls");
 
 // Load Environment Variables (MONGO_URI)
@@ -13,7 +13,8 @@ const mongoURI = process.env.MONGO_URI;
 
 if (!mongoURI) {
   console.error("❌ MONGO_URI is missing in .env file! Exiting.");
-  process.exit(1);
+  // Removed process.exit(1) here for smoother serverless deployment, 
+  // although mongoose will still throw errors below.
 }
 
 mongoose
@@ -24,17 +25,40 @@ mongoose
 // --- EXPRESS SETUP ---
 const app = express();
 
+// --- CRITICAL CORS FIX FOR VERSEL SERVERLESS ---
+// We explicitly whitelist the frontend domain to prevent 404/CORS errors
+// YOU MUST CHANGE THE PLACEHOLDER DOMAIN BELOW TO MATCH YOUR LIVE FRONTEND DOMAIN
+const allowedOrigins = [
+  'https://ankit-qp-frontend.vercel.app', // <-- REPLACE THIS WITH YOUR ACTUAL LIVE FRONTEND DOMAIN
+  'http://localhost:5173',                 // Local Vite development
+  'http://localhost:5000'                  // Local backend development
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (e.g., from Postman or local access)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      // Reject if origin is not in the whitelist
+      return callback(new Error(`CORS Policy: Access denied for ${origin}`), false);
+    }
+    return callback(null, true); // Allow the request
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+// --- END CORS FIX ---
+
 // Trust proxies for correct IP retrieval (needed for IP-based voting)
 app.set("trust proxy", 1); 
-app.use(cors());
 app.use(express.json());
 
 // Main API Route
 app.use("/api/polls", pollRoutes);
 
 // --- Vercel Serverless Export ---
-// Export the Express app wrapped in serverless-http 
-// This is the permanent fix for the 404 error on the API endpoint
+// This wraps the Express app so Vercel can run it as a function
 module.exports.handler = serverless(app);
 
 // Keep the local listener for local development
