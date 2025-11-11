@@ -269,15 +269,11 @@ input[type="checkbox"]:checked {
 
 .result-bar-fill {
   height: 100%;
+  width: 0%; /* Initial width, will be updated dynamically */
   background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-green));
   box-shadow: 0 0 20px rgba(0,255,255,0.4);
   border-radius: 10px;
-  animation: fillUp 1.2s ease forwards;
-}
-
-@keyframes fillUp {
-  from { width: 0%; }
-  to { width: var(--width); }
+  transition: width 1.2s ease-in-out;
 }
 
 /* Total Votes */
