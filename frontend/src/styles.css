@@ -1,5 +1,16 @@
-/* === QUICKPOLL CYBER GLOW THEME === */
+/* === QUICKPOLL CYBER GLOW THEME (Aligned) === */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;500;600&display=swap');
+
+/* --- Reset / Consistency --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
 
 :root {
   --neon-blue: #00eaff;
@@ -11,6 +22,11 @@
   --muted: #9ca3c7;
   --border: rgba(0, 255, 255, 0.15);
   --glow: 0 0 25px rgba(0, 255, 255, 0.3);
+
+  /* Unified control sizing */
+  --control-h: 54px;
+  --radius: 12px;
+  --space: 14px;
 }
 
 /* === GLOBAL === */
@@ -22,8 +38,9 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  padding-top: 60px;
+  padding: 60px 16px 24px;
   animation: bgShift 12s infinite alternate ease-in-out;
+  margin: 0;
 }
 
 @keyframes bgShift {
@@ -31,21 +48,31 @@ body {
   100% { background: radial-gradient(circle at 80% 70%, #0d0d32, #040411 90%); }
 }
 
+/* Make vertical rhythm inside cards consistent */
+.container > * + *,
+.poll-page-container > * + *,
+.poll-results > * + * {
+  margin-top: 16px;
+}
+
 /* === HEADER === */
 header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
+  width: 100%;
+  max-width: 680px;
 }
 
 header h1 {
   font-family: "Orbitron", sans-serif;
-  font-size: 2.6rem;
+  font-size: clamp(2rem, 2.2rem + 0.5vw, 2.6rem);
   letter-spacing: 2px;
   background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 18px rgba(0, 230, 255, 0.6);
   animation: pulseTitle 3s infinite ease-in-out;
+  margin: 0 0 6px;
 }
 
 @keyframes pulseTitle {
@@ -55,19 +82,23 @@ header h1 {
 
 header p {
   color: var(--muted);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  margin: 0;
 }
 
-/* === CONTAINER === */
-.container, .poll-page-container, .poll-results {
+/* === CONTAINER (Centered card) === */
+.container,
+.poll-page-container,
+.poll-results {
   background: var(--panel-bg);
   border-radius: 18px;
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 0 30px rgba(0,255,255,0.08);
   backdrop-filter: blur(10px);
-  padding: 40px;
+  padding: 28px;
   max-width: 600px;
-  width: 90%;
+  width: 100%;
+  margin: 0 auto;          /* keep it perfectly centered */
   animation: fadeUp 0.8s ease-in-out;
 }
 
@@ -77,40 +108,64 @@ header p {
 }
 
 /* === HEADINGS === */
-.container h2, .poll-results h3 {
+.container h2,
+.poll-results h3 {
   font-family: "Orbitron", sans-serif;
-  font-size: 2rem;
+  font-size: 1.9rem;
   text-align: center;
   color: var(--neon-blue);
   text-shadow: 0 0 15px rgba(0,255,255,0.5);
-  margin-bottom: 30px;
+  margin: 0 0 10px;
 }
 
-/* === INPUTS === */
-input[type="text"], input[type="datetime-local"] {
+/* === INPUTS (uniform sizing + spacing) === */
+input[type="text"],
+input[type="datetime-local"] {
+  display: block;
   width: 100%;
-  padding: 16px 18px;
+  height: var(--control-h);         /* same height for all controls */
+  padding: 0 18px;
   font-size: 1.05rem;
-  border-radius: 12px;
+  border-radius: var(--radius);
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.05);
   color: var(--text);
   transition: 0.3s ease;
   box-shadow: inset 0 0 10px rgba(0,255,255,0.05);
+  line-height: 1;                   /* avoids extra height on date input */
 }
 
-input[type="text"]:hover, input[type="datetime-local"]:hover {
+/* space stacked text inputs in "Options" neatly */
+input[type="text"] + input[type="text"] {
+  margin-top: var(--space);
+}
+
+input[type="text"]:hover,
+input[type="datetime-local"]:hover {
   border-color: var(--neon-blue);
   box-shadow: 0 0 15px rgba(0,255,255,0.25);
 }
 
-input[type="text"]:focus, input[type="datetime-local"]:focus {
+input[type="text"]:focus,
+input[type="datetime-local"]:focus {
   border-color: var(--neon-blue);
   box-shadow: 0 0 20px rgba(0,255,255,0.5);
   background: rgba(0,255,255,0.06);
   outline: none;
 }
 
+/* Make the native picker icon align nicely */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  margin-right: 6px;
+  opacity: 0.9;
+  cursor: pointer;
+}
+input[type="datetime-local"]::-webkit-datetime-edit {
+  line-height: 1;
+  padding: 0;
+}
+
+/* placeholder */
 ::placeholder {
   color: #8492b8;
   letter-spacing: 0.3px;
@@ -123,7 +178,8 @@ input[type="text"]:focus, input[type="datetime-local"]:focus {
   color: var(--neon-green);
   border: 1px dashed var(--neon-green);
   border-radius: 10px;
-  padding: 12px;
+  height: var(--control-h);
+  padding: 0 14px;
   font-weight: 600;
   font-size: 1.05rem;
   width: 100%;
@@ -136,23 +192,37 @@ input[type="text"]:focus, input[type="datetime-local"]:focus {
   transform: translateY(-2px);
 }
 
-/* === POLL SETTINGS === */
+/* === POLL SETTINGS (aligned checkbox + label + date) === */
 .poll-settings {
-  margin-top: 25px;
+  margin-top: 18px;
   border-top: 1px solid rgba(255,255,255,0.08);
-  padding-top: 20px;
+  padding-top: 18px;
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 12px;                 /* even spacing between settings rows */
 }
 
 .poll-settings h4 {
   font-family: "Orbitron", sans-serif;
   color: var(--neon-blue);
   text-shadow: 0 0 12px rgba(0,230,255,0.4);
-  font-size: 1.25rem;
-  margin-bottom: 15px;
+  font-size: 1.2rem;
+  margin: 0 0 4px;
+}
+
+/* Ensure checkbox rows line up content nicely */
+.poll-settings label,
+.poll-settings .setting-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.98rem;
 }
 
 /* Checkbox */
 input[type="checkbox"] {
+  flex: 0 0 auto;
   width: 22px;
   height: 22px;
   appearance: none;
@@ -161,6 +231,7 @@ input[type="checkbox"] {
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.25s;
+  vertical-align: middle;
 }
 
 input[type="checkbox"]:checked {
@@ -168,25 +239,28 @@ input[type="checkbox"]:checked {
   box-shadow: 0 0 15px rgba(0,255,153,0.6);
 }
 
-/* === CREATE POLL BUTTON === */
-.create-poll-btn, .vote-btn {
-  margin-top: 25px;
+/* === CREATE POLL / VOTE BUTTONS (full width, aligned) === */
+.create-poll-btn,
+.vote-btn {
+  margin-top: 16px;
   width: 100%;
-  padding: 16px;
+  height: var(--control-h);
+  padding: 0 16px;
   font-size: 1.1rem;
   font-weight: 600;
   color: white;
   background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius);
   cursor: pointer;
   transition: 0.4s ease-in-out;
   box-shadow: 0 0 25px rgba(0,230,255,0.4);
 }
 
-.create-poll-btn:hover, .vote-btn:hover {
-  transform: scale(1.05);
-  filter: brightness(1.2);
+.create-poll-btn:hover,
+.vote-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  filter: brightness(1.08);
   box-shadow: 0 0 35px rgba(255,0,255,0.6);
 }
 
@@ -194,8 +268,8 @@ input[type="checkbox"]:checked {
 .voting-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  margin-top: 20px;
+  gap: 14px;
+  margin-top: 8px;
 }
 
 .vote-option {
@@ -203,10 +277,10 @@ input[type="checkbox"]:checked {
   display: flex;
   align-items: center;
   padding: 14px 18px;
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.1);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   transition: 0.3s ease;
   color: var(--text);
 }
@@ -230,6 +304,7 @@ input[type="checkbox"]:checked {
   background: transparent;
   cursor: pointer;
   position: relative;
+  flex: 0 0 auto;
 }
 
 .vote-option input[type="radio"]:checked {
@@ -250,12 +325,12 @@ input[type="checkbox"]:checked {
 /* === RESULTS PAGE === */
 .poll-results h3 {
   text-align: center;
-  font-size: 1.8rem;
-  margin-bottom: 25px;
+  font-size: 1.7rem;
+  margin: 0 0 10px;
 }
 
 .result-bar-wrapper {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .result-bar {
@@ -269,7 +344,7 @@ input[type="checkbox"]:checked {
 
 .result-bar-fill {
   height: 100%;
-  width: 0%; /* Initial width, will be updated dynamically */
+  width: 0%;
   background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-green));
   box-shadow: 0 0 20px rgba(0,255,255,0.4);
   border-radius: 10px;
@@ -281,13 +356,13 @@ input[type="checkbox"]:checked {
   text-align: center;
   font-size: 1rem;
   color: var(--muted);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 /* Share Poll Section */
 .share-container {
   background: rgba(255,255,255,0.05);
-  padding: 14px;
+  padding: 12px;
   border-radius: 10px;
   display: flex;
   gap: 10px;
@@ -296,26 +371,46 @@ input[type="checkbox"]:checked {
 }
 
 .share-container input[type="text"] {
-  flex: 1;
+  flex: 1 1 auto;
+  height: var(--control-h);
+  padding: 0 14px;
   background: transparent;
   color: var(--text);
-  border: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   outline: none;
   font-size: 0.95rem;
 }
 
 .share-copy-btn {
+  flex: 0 0 auto;
   background: var(--neon-blue);
   color: black;
-  padding: 8px 12px;
-  border-radius: 8px;
+  height: var(--control-h);
+  padding: 0 14px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.3s;
+  border: none;
 }
 
 .share-copy-btn:hover {
   background: var(--neon-pink);
   color: white;
   box-shadow: 0 0 15px rgba(255,0,255,0.5);
+}
+
+/* === Small screens === */
+@media (max-width: 480px) {
+  .container,
+  .poll-page-container,
+  .poll-results {
+    padding: 20px;
+  }
+
+  .share-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
