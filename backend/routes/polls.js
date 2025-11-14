@@ -3,8 +3,8 @@ const router = express.Router();
 const Poll = require('../models/Poll');
 const auth = require('../middleware/auth');
 
-// ... (keep your existing GET /, POST /, and POST /:id/vote routes) ...
-// ...
+// --- PUBLIC ROUTES ---
+
 router.get('/', async (req, res) => {
     try {
         const polls = await Poll.find().select('question created_at creator').sort({ created_at: -1 });
@@ -14,6 +14,25 @@ router.get('/', async (req, res) => {
         res.status(500).send('Server Error fetching polls');
     }
 });
+
+router.get('/:id', async (req, res) => {
+    try {
+        // This is the VOTING page route. It sends the voters list for client-side voting check.
+        const poll = await Poll.findById(req.params.id);
+        if (!poll) {
+            return res.status(404).json({ msg: 'Poll not found' });
+        }
+        res.json(poll);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ msg: 'Poll not found' });
+        }
+        res.status(500).send('Server Error fetching single poll');
+    }
+});
+
+// --- PROTECTED ROUTES (Require Auth Middleware) ---
 
 router.post('/', auth, async (req, res) => {
     const { question, options } = req.body;
@@ -72,32 +91,37 @@ router.post('/:id/vote', auth, async (req, res) => {
         res.status(500).send('Server Error while recording vote');
     }
 });
-// ...
-// ...
 
-// *** MODIFY THIS ROUTE ***
-// This route is for the VOTING page. It must send the voter IDs.
-router.get('/:id', async (req, res) => {
-    try {
-        // We select 'voters' so the frontend can check if the user has voted
-        const poll = await Poll.findById(req.params.id).select('question options voters');
-        if (!poll) {
-            return res.status(404).json({ msg: 'Poll not found' });
-        }
-        res.json(poll);
-    } catch (err) {
-        console.error(err.message);
-        if (err.kind === 'ObjectId') {
-            return res.status(404).json({ msg: 'Poll not found' });
-        }
-        res.status(500).send('Server Error fetching single poll');
-    }
+// --- FIX: ADDED COMMENT ROUTE ---
+router.post('/:id/comment', auth, async (req, res) => {
+  const { text } = req.body;
+  const { username } = req.user; 
+
+  if (!text) {
+    return res.status(400).json({ msg: 'Comment text is required' });
+  }
+
+  try {
+    const poll = await Poll.findById(req.params.id);
+    if (!poll) { return res.status(404).json({ msg: 'Poll not found' }); }
+
+    const newComment = {
+      username: username,
+      text: text,
+    };
+
+    poll.comments.unshift(newComment);
+    await poll.save();
+
+    res.json(poll.comments);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error posting comment');
+  }
 });
 
 
-// *** ADD THIS NEW ROUTE ***
-// This route is for the RESULTS page.
-// It is protected and only shows the voter list to the creator.
+// --- FIX: ADDED PROTECTED RESULTS ROUTE ---
 router.get('/:id/results', auth, async (req, res) => {
     try {
         let poll;
@@ -110,10 +134,9 @@ router.get('/:id/results', auth, async (req, res) => {
 
         // Check if the person requesting is the poll's creator
         if (basicPoll.creator.toString() === req.user.id) {
-            // If they ARE the creator, re-fetch the poll and populate the voter names
+            // If they ARE the creator, re-fetch and populate voter names
             poll = await Poll.findById(req.params.id)
-                .populate('comments.username', 'username') // (if you had comments)
-                .populate('voters', 'username'); // <-- Get usernames of voters
+                .populate('voters', 'username'); 
         } else {
             // If they are NOT the creator, just send the basic poll data
             poll = basicPoll;
